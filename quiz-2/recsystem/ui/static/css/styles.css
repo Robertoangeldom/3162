@@ -1,0 +1,47 @@
+.back{
+    background-color: gold;
+}
+
+.box{
+    background: rgba(0, 0, 0, .5);
+    padding: 25px;
+    border-radius: 5px;
+}
+
+.cen{
+    width: 100%; 
+    height: 100%; display: flex; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.field-icon {
+    float: right;
+    margin-left: -25px;
+    margin-top: -25px;
+    position: relative;
+    z-index: 2;
+  }
+
+html, body{
+    margin: 0;
+    height: 100%;
+}
+/* Begin point for registration form */
+form label {
+    display: block;
+}
+
+.registration_form form div {
+    margin: 15px;
+    
+}
+.buttonleft{display: flex;
+    justify-content: flex-end;}
+
+
+.registration_form {
+    max-width: 168px;
+    padding: 5px;
+}
+/* End point for registration form */

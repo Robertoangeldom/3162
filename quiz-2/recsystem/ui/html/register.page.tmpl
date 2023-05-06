@@ -1,0 +1,77 @@
+{{template "base" .}}
+{{define "content"}}        
+  <h2 class="text-light text-center">Gym Registration Form</h2>
+  <div class="text-light">
+
+      <form action="" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <div class="row">
+      <div class="col">
+         <div class="mb-3">
+          <label class="form-label">First Name</label>
+              <div class="input-group"> 
+                <input type="text" class="form-control" name="firstname" placeholder="John" required>
+              </div>
+        </div>
+         <div class="mb-3"> 
+          <label class="form-label">Last Name</label>
+              <div class="input-group"> 
+                <input type="text" class="form-control" name="lastname" placeholder="Doe" required>
+              </div>
+        </div>
+         <div class="mb-3"> 
+          <label class="form-label">Age</label>
+          <div class="input-group"> 
+            <input type="text" class="form-control" name="age" placeholder="26" required>
+          </div>
+        </div>
+         <div class="mb-3">
+          <label class="form-label">Address</label>
+          <div class="input-group"> 
+            <input type="text" class="form-control" name="address" placeholder="silly street north" required>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-auto">
+         <div class="mb-3"> 
+          <label class="form-label">Phone</label>
+          <div class="input-group"> 
+            <input type="text" class="form-control" name="phone" placeholder="602-6907" required>
+          </div>
+        </div>
+        <div class="mb-3"> 
+          <label class="form-label">Email Address</label>
+          <div class="input-group"> 
+            <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+            <input type="email" class="form-control" name="email" placeholder="example@gmail.com" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+            <input type="password" name="password" autocomplete="current-password" id="pass" placeholder="?????" required>
+            <i class="fa-solid fa-eye input-group-text" id="togglePassword" style="cursor: pointer;"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button type="submit" class="btn btn-success" value="Register">Register</button>
+  </form>
+  </div>
+{{ end }}
+
+{{define "js"}}
+<script>
+const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#pass');
+
+  togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+</script>
+{{end}}

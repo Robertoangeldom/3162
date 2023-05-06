@@ -1,0 +1,49 @@
+{{template "base" .}}
+{{define "content"}}
+     
+        <!-- content for each tab goes here -->
+        <section class="text-light">
+          <h2>Login</h2>
+          <!-- login form or other login content goes here -->
+        
+          <form method="post" novalidate>
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <div class="input-group"> 
+                <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+                <input type="email" class="form-control" name="email" placeholder="example@gmail.com" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="fa-solid fa-key"></i></span>
+                <input type="password" name="password" autocomplete="current-password" id="id_password" placeholder="?????" required>
+                <i class="fa-solid fa-eye input-group-text" id="togglePassword" style="cursor: pointer;"></i>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success" value="Login">Login</button><br>
+            <a href="register">register here</a>
+        </form>
+        
+        </section>
+
+{{ end }}
+
+{{define "js"}}
+<script>
+const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#id_password');
+
+  togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye slash icon
+    this.classList.toggle('fa-eye-slash');
+});
+</script>
+{{end}}
+
+
