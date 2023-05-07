@@ -22,7 +22,7 @@ type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	reservations   models.ReservationModel
-	user          models.UserModel
+	user           models.UserModel
 	sessionManager *scs.SessionManager
 }
 

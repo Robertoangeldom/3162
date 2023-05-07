@@ -1,4 +1,46 @@
 {{template "base" .}}
 {{define "content"}}
+<h2 class="text-light text-center">Reservation Form</h2>
+  <div class="text-light">
 
+      <form action="" method="post" novalidate>
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+         <div class="mb-3">
+          <label class="form-label">Date for Reservation</label>
+              <div class="input-group"> 
+                <input type="text" class="form-control" name="date" placeholder="YYYY-MM-DD" required>
+              </div>
+        </div>
+         <div class="mb-3"> 
+          <label class="form-label">Time for Reservation</label>
+              <div class="input-group"> 
+                <input type="text" class="form-control" name="time" placeholder="HH:MM" required>
+              </div>
+        </div>
+         <div class="mb-3"> 
+          <label class="form-label">Duration</label>
+          <div class="input-group"> 
+            <input type="text" class="form-control" name="duration" placeholder="30 minutes" required>
+          </div>
+        </div>
+         <div class="mb-3">
+          <label class="form-label">Amount of people coming</label>
+          <div class="input-group"> 
+            <input type="text" class="form-control" name="count" placeholder="Number" required>
+          </div>
+        </div>
+      <div class="col-md-auto">
+         <div class="mb-3"> 
+          <label class="form-label">Notes</label>
+          <div class="input-group"> 
+            <input type="textarea" class="form-control" name="notes" required>
+          </div>
+        </div>
+    <button type="submit" class="btn btn-success" value="Register">Register</button>
+  </form>
+  </div>
 {{ end }}
+
+{{define "js"}}
+
+{{end}}

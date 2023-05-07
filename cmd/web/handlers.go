@@ -39,7 +39,7 @@ func (app *application) loginformSubmit(w http.ResponseWriter, r *http.Request) 
 	log.Println(id, roles_id ,err)
 	if err != nil {
 		if errors.Is(err, models.ErrInvalidCredentials) {
-			RenderTemplate(w, "login.page.tmpl", nil)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 		}
 		return
 	}
@@ -81,7 +81,7 @@ func (app *application) registerSubmit(w http.ResponseWriter, r *http.Request) {
 	email := r.PostForm.Get("email")
 	password := r.PostForm.Get("password")
 	//lets write the data to the table
-	err := app.user.Insert(fname, lname , age, address, phone, email, password)
+	err := app.user.Insert(email, fname, lname , age, address, phone, password)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
 			RenderTemplate(w, "signup.page.tmpl", nil)
@@ -104,13 +104,31 @@ func (app *application) reserveFormSubmit(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) userPortal(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "userPortal.page.tmpl", nil)
+	flash := app.sessionManager.PopString(r.Context(), "flash")
+	//render
+	data := &templateData{ //putting flash into template data
+	Flash: flash,
+	CSRFToken: nosurf.Token(r),
+}
+	RenderTemplate(w, "userPortal.page.tmpl", data)
 
 }
 
 //userPortalFormSubmit
 func (app *application) userPortalFormSubmit(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "userPortal.page.tmpl", nil)
+	r.ParseForm()
+	date := r.PostForm.Get("date") //"name" is the name of the form
+	time := r.PostForm.Get("time")
+	duration := r.PostForm.Get("duration")
+	count := r.PostForm.Get("count")
+	notes := r.PostForm.Get("notes")
+	//lets write the data to the table
+	err := app.reservations.Insert(date, time, duration, count, notes)
+	if err != nil {
+		if errors.Is(err, models.ErrInvalid) {
+			RenderTemplate(w, "reservation.page.tmpl", nil)
+		}
+	}
 
 }
 

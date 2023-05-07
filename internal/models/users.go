@@ -49,12 +49,12 @@ func (m *UserModel) Insert(email, fname, lname , age, address, phone, password s
 		return err
 	}
 	query := `
-			INSERT INTO users(email, first_name, last_name, age, user_address, phone_number, user_password,)
-			VALUES($1, $2, $3, $4, $5, $6, $7)
+	INSERT INTO users (email, first_name, last_name, age, user_address, phone_number, user_password)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err = m.DB.ExecContext(ctx, query, fname, lname , int_age, address, phone, email, hashedPassword)
+	_, err = m.DB.ExecContext(ctx, query, email, fname, lname, int_age, address, phone, hashedPassword)
 	if err != nil {
 		switch {
 		case err.Error() == `pgx: duplicate key value violates unique constraint "users_email_key"`:
@@ -66,35 +66,37 @@ func (m *UserModel) Insert(email, fname, lname , age, address, phone, password s
 	return nil
 }
 
-func (m *UserModel) Authenticate(email, password string) (int ,int ,error){
-	var id int 
+func (m *UserModel) Authenticate(email, password string) (int, int, error) {
+	var id int
 	var roles_id int
 	var hashedPassword []byte
-	// check if there is a row in the table for the email provided
+
 	query := `
-				SELECT users_id, user_password, roles_id 
-				FROM users
-				WHERE email = $1
-	         `
+		SELECT users_id, user_password, roles_id 
+		FROM users
+		WHERE email = $1
+	`
+
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
 	err := m.DB.QueryRowContext(ctx, query, email).Scan(&id, &hashedPassword, &roles_id)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows){
-			return 0,0, ErrInvalidCredentials
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, 0, ErrInvalidCredentials
 		} else {
 			return 0, 0, err
 		}
-	}//handing error
-	//the user does exist
+	}
+
 	err = bcrypt.CompareHashAndPassword(hashedPassword, []byte(password))
 	if err != nil {
-		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword){
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 			return 0, 0, ErrInvalidCredentials
-		}else{
+		} else {
 			return 0, 0, err
 		}
 	}
-	//password is correct
+
 	return id, roles_id, nil
 }

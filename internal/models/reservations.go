@@ -5,14 +5,22 @@ package models
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"strconv"
 	"time"
+)
+
+var (
+	ErrResreved = errors.New("this date has already been taken")
+	ErrInvalid = errors.New("something went wrong while creating reservation")
 )
 
 // The Question model will represent a single question in our questions table
 type Reservation struct {
 	ReservationID   int64
 	UserID          int64
-	ReservationDate time.Time // date needs to be extracted
+	ReservationDate string// date needs to be extracted
+	ReservationTime string
 	Duration        int8      // expected time in minutes
 	PeopleCount     int8      // number of people for the session
 	Notes           string
@@ -28,24 +36,30 @@ type ReservationModel struct {
 }
 
 // The Insert() function stores a question into the  table
-func (m *ReservationModel) Insert(duration int, peopleCount int, notes string) (int64, error) {
-	// id will be used to stored the unique identifier returned by
-	// PostgreSQL after adding the row to the table
-	var id int64
-	statement :=
-		`
-							INSERT INTO reservations(duration, peopleCount, notes )
-							VALUES($1, $2, $3)
-							RETURNING reservation_id
-	            `
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
-	err := m.DB.QueryRowContext(ctx, statement, duration, peopleCount, notes).Scan(&id)
-	if err != nil {
-		return 0, err
-	}
-	return id, nil
+func (m *ReservationModel) Insert(date, tm, duration, count, notes string) error {
+    var int_count int
+    int_count, err := strconv.Atoi(count)
+    if err != nil{
+        return err
+    }
+    query := `
+    INSERT INTO reservations (reservation_date, reservation_time, duration, people_count, notes)
+    VALUES ($1, $2, $3, $4, $5)
+    `
+    ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+    defer cancel()
+    _, err = m.DB.ExecContext(ctx, query, date, tm, duration, int_count, notes)
+    if err != nil {
+        switch {
+		case err.Error() == `pgx: duplicate key value violates unique constraint "reservations_date_time_key"`:
+			return ErrResreved
+		default:
+			return err
+		}
+    }
+    return nil
 }
+
 
 func (m *ReservationModel) Get() (*Reservation, error) {
 	var res Reservation

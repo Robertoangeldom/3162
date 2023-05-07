@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS users(
   phone_number text NOT NULL,
   roles_id int DEFAULT 2, 
   user_password VARCHAR(255) UNIQUE NOT NULL,
-  activated boolean,
+  activated boolean DEFAULT true,
   created_at TIMESTAMP(0) WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
