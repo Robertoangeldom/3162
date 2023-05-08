@@ -182,43 +182,7 @@ func (app *application) feedbackFormSubmit(w http.ResponseWriter, r *http.Reques
 //Display all users on Admin dashboard
 
 func (app *application) displayUsers(w http.ResponseWriter, r *http.Request) {
-	// readQuote := `Select users_id, first_name, last_name, phone_number, user_password, activated
-	// From users limit 3;`
-	// rows, err := app.user.DB.Query(readQuote)
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	http.Error(w,
-	// 		http.StatusText(http.StatusInternalServerError),
-	// 		http.StatusInternalServerError)
-	// }
-	// defer rows.Close()
-	// var users []models.User
-	// for rows.Next() {
-	// 	var u models.User
-	// 	err = rows.Scan(&u.ID, &u.FirstName, &u.LastName,
-	// 		&u.Phone, &u.Password, &u.Activated)
 
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 		http.Error(w,
-	// 			http.StatusText(http.StatusInternalServerError),
-	// 			http.StatusInternalServerError)
-	// 	}
-	// 	users = append(users, u)
-
-	// }
-	// err = rows.Err()
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	http.Error(w,
-	// 		http.StatusText(http.StatusInternalServerError),
-	// 		http.StatusInternalServerError)
-	// }
-	// for _, user := range users {
-	// 	fmt.Fprintf(w, "%v\n", user)
-	// }
-
-	// starting here
 
 	ts, err := template.ParseFiles("./ui/html/view.users.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
