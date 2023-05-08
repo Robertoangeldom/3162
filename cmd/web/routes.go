@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
 	dynamicMiddleware := alice.New(app.sessionManager.LoadAndSave, noSurf)
-	
+
 	// from here
 	router.Handler(http.MethodGet, "/", dynamicMiddleware.ThenFunc(app.home))
 	router.Handler(http.MethodGet, "/about", dynamicMiddleware.ThenFunc(app.about))
@@ -25,6 +25,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPost, "/register", dynamicMiddleware.ThenFunc(app.registerSubmit))
 	router.Handler(http.MethodGet, "/feedback", dynamicMiddleware.ThenFunc(app.feedback))
 	router.Handler(http.MethodPost, "/feedback", dynamicMiddleware.ThenFunc(app.feedbackFormSubmit))
+	router.Handler(http.MethodGet, "/viewusers", dynamicMiddleware.ThenFunc(app.displayUsers))
+
 	//protected routes
 	protected := dynamicMiddleware.Append(app.requireAuthenticationMiddleware)
 	router.Handler(http.MethodGet, "/reservation", protected.ThenFunc(app.reserve))
@@ -33,6 +35,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPost, "/user", protected.ThenFunc(app.userPortalFormSubmit))
 	router.Handler(http.MethodGet, "/admin", protected.ThenFunc(app.adminPortal))
 	router.Handler(http.MethodPost, "/admin", protected.ThenFunc(app.adminPortalFormSubmit))
+
 	//stop here
 
 	//tidy up the middleware chain
