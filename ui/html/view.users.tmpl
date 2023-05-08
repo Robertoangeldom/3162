@@ -30,6 +30,9 @@
                     <td>{{.Password}} </td>
                     <td>{{.Activated}} </td>
                     <td>{{.CreatedAt.Format "02 Jan 2006 15:04:05"}}</td>
+                    <td><a href="/update?id={{.ID}}"><button type="submit" class="btn btn-success" value="Update">Update</button></a></td>
+
+                    
             </tr>
         {{ end }}
         {{ else }}
