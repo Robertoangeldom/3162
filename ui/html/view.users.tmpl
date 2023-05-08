@@ -1,0 +1,42 @@
+{{template "base" .}}
+{{define "content"}}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Phone</th>
+            <th>Roles</th>
+            <th>Password</th>
+            <th>Activated</th>
+            <th>Created At</th>
+          </tr>
+    </thead>
+    <tbody>
+        {{ if . }}
+        {{ range . }}
+            <tr>
+                
+                    <td>{{.ID}}</td>
+                    <td>{{.Email}}</td>
+                    <td>{{.FirstName}}</td>
+                    <td>{{.LastName}}</td>
+                    <td>{{.Age}} </td>
+                    <td>{{.Address}} </td>
+                    <td>{{.Phone}} </td>
+                    <td>{{.Roles}} </td>
+                    <td>{{.Password}} </td>
+                    <td>{{.Activated}} </td>
+                    <td>{{.CreatedAt}} </td>
+            </tr>
+        {{ end }}
+        {{ else }}
+    <p>No data available.</p>
+    {{ end }}
+    </tbody>
+</table>
+{{ end }}

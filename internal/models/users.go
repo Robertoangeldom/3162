@@ -5,39 +5,39 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-//Create a user
+// Create a user
 var (
-	ErrNoRecord = errors.New("no matching record found")
+	ErrNoRecord           = errors.New("no matching record found")
 	ErrInvalidCredentials = errors.New("invalid credentials")
-	ErrDuplicateEmail = errors.New("duplicate email")
+	ErrDuplicateEmail     = errors.New("duplicate email")
 )
 
-type User struct{
-	ID int64
-	Email string
+type User struct {
+	ID        int64
+	Email     string
 	FirstName string
-	LastName string
-	Age int
-	Address string
-	Phone string
-	Roles int
-	Password []byte
+	LastName  string
+	Age       int
+	Address   string
+	Phone     string
+	Roles     int
+	Password  []byte
 	Activated bool
 	CreatedAt time.Time
 }
 
-type UserModel struct{
+type UserModel struct {
 	DB *sql.DB
 }
 
-
-func (m *UserModel) Insert(email, fname, lname , age, address, phone, password string) error {
+func (m *UserModel) Insert(email, fname, lname, age, address, phone, password string) error {
 	var int_age int
 	//lets first hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
@@ -45,7 +45,7 @@ func (m *UserModel) Insert(email, fname, lname , age, address, phone, password s
 		return err
 	}
 	int_age, err = strconv.Atoi(age)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	query := `
@@ -99,4 +99,38 @@ func (m *UserModel) Authenticate(email, password string) (int, int, error) {
 	}
 
 	return id, roles_id, nil
+}
+
+// The Display() function retrieves all equipment types from the database
+func (m *UserModel) Display() ([]User, error) {
+	query := `
+	Select users_id, first_name, last_name, phone_number, user_password, activated
+    From users limit 3;
+	`
+	rows, err := m.DB.Query(query)
+	if err != nil {
+		fmt.Println("Error querying database:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var userTypes []User
+
+	// Iterate over the rows and create a slice of structs
+	for rows.Next() {
+		var userType User
+		err := rows.Scan(&userType.ID, &userType.FirstName, &userType.LastName, &userType.Phone, &userType.Password, &userType.Activated)
+		if err != nil {
+			fmt.Println("Error scanning row:", err)
+			return nil, err
+		}
+		userTypes = append(userTypes, userType)
+	}
+
+	if err := rows.Err(); err != nil {
+		fmt.Println("Error iterating over rows:", err)
+		return nil, err
+	}
+
+	return userTypes, nil
 }
