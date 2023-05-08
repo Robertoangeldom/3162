@@ -1,0 +1,27 @@
+{{template "base" .}}
+{{define "content"}}
+<table>
+    <thead>
+        <tr>
+            <th>Equipment Name</th>
+            <th>Equipment Status</th>
+            <th>Equipment Availability</th>
+            <th>Type Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ if . }}
+        {{ range . }}
+            <tr>
+                <td>{{ .EquipmentName }}</td>
+                <td>{{ .EquipmentStatus }}</td>
+                <td>{{ .EquipmentAvailability }}</td>
+                <td>{{ .TypeName }}</td>
+            </tr>
+        {{ end }}
+        {{ else }}
+    <p>No data available.</p>
+    {{ end }}
+    </tbody>
+</table>
+{{ end }}

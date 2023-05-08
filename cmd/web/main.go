@@ -23,6 +23,7 @@ type application struct {
 	infoLog        *log.Logger
 	reservations   models.ReservationModel
 	user           models.UserModel
+	equipments     models.EquipmentModel
 	sessionManager *scs.SessionManager
 }
 
@@ -53,7 +54,8 @@ func main() {
 		errorLog:       errorLog,
 		infoLog:        infoLog,
 		reservations:   models.ReservationModel{DB: db},
-		user:          models.UserModel{DB: db},
+		user:           models.UserModel{DB: db},
+		equipments:     models.EquipmentModel{DB: db},
 		sessionManager: sessionManager,
 	}
 	// cleanup the connection pool

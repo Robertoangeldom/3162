@@ -27,8 +27,8 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPost, "/feedback", dynamicMiddleware.ThenFunc(app.feedbackFormSubmit))
 	//protected routes
 	protected := dynamicMiddleware.Append(app.requireAuthenticationMiddleware)
-	router.Handler(http.MethodGet, "/reservation", protected.ThenFunc(app.reserve))
-	router.Handler(http.MethodPost, "/reservation", protected.ThenFunc(app.reserveFormSubmit))
+	router.Handler(http.MethodGet, "/equipment", dynamicMiddleware.ThenFunc(app.equipment))
+	router.Handler(http.MethodPost, "/equipment", dynamicMiddleware.ThenFunc(app.equipmentFormSubmit))
 	router.Handler(http.MethodGet, "/user", protected.ThenFunc(app.userPortal))
 	router.Handler(http.MethodPost, "/user", protected.ThenFunc(app.userPortalFormSubmit))
 	router.Handler(http.MethodGet, "/admin", protected.ThenFunc(app.adminPortal))

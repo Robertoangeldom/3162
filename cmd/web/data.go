@@ -8,6 +8,7 @@ import (
 type templateData struct {
 	Reservation *models.Reservation
 	User 		*models.User
+	Equipment  	*models.EquipmentType
 	Flash 	 	string
 	CSRFToken 	string
 }
