@@ -144,10 +144,6 @@ func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) {
-	flash := app.sessionManager.PopString(r.Context(), "flash")
-	//render
-	
-
 	ts, err := template.ParseFiles("./ui/html/equ_admin.page.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())
@@ -162,13 +158,7 @@ func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	data := &templateData{ //putting flash into template data
-		EquipmentTypes: equipmentTypes,
-		Flash:     flash,
-		CSRFToken: nosurf.Token(r),
-	}
-
-	err = ts.Execute(w, data)
+	err = ts.Execute(w, equipmentTypes)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -179,23 +169,23 @@ func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) 
 func (app *application) equipmentDeleteSubmit(w http.ResponseWriter, r *http.Request) {
     
 	r.ParseForm()
-	value := r.PostForm.Get("value") //"name" is the name of the form
-	value2 := r.PostForm.Get("value2")
-	id := r.PostForm.Get("id")
+	value := r.PostForm.Get("status") //"name" is the name of the form
+	value2 := r.PostForm.Get("available")
+	name := r.PostForm.Get("name")
 	typ := r.PostForm.Get("type")
 	button := r.PostForm.Get("myButton")
     // Delete an equipment type
-	log.Println(value, value2, id, typ)
+	log.Println(value, value2, typ)
 
 	if button == "delete"{
-		err := app.equipments.Delete(id)
+		err := app.equipments.Delete(name)
 		if err != nil {
 			log.Println(err.Error())
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 	}else{
-		err := app.equipments.Update(value, value2, typ, id)
+		err := app.equipments.Update(value, value2, typ, name)
 		if err != nil {
 			log.Println(err.Error())
     	    http.Error(w, err.Error(), http.StatusBadRequest)

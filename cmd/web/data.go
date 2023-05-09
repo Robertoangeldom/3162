@@ -1,4 +1,3 @@
-// Filename: cmd/web/data.go
 package main
 
 import (
@@ -8,7 +7,7 @@ import (
 type templateData struct {
 	Reservation *models.Reservation
 	User 		*models.User
-	EquipmentTypes []models.EquipmentType
+	Equipment  	*models.EquipmentType
 	Flash 	 	string
 	CSRFToken 	string
 }

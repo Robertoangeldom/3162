@@ -11,7 +11,6 @@ import (
 
 // The EquipmentType model will represent a single equipment type in our equipment_types table
 type EquipmentType struct {
-	 ID 						 int
 	 EquipmentName           string
 	 EquipmentStatus         string
 	 EquipmentAvailability   string
@@ -28,7 +27,7 @@ type EquipmentModel struct {
 // The Display() function retrieves all equipment types from the database
 func (m *EquipmentModel) Display() ([]EquipmentType, error) {
     query := `
-	SELECT equipments.equipments_id, equipments.equ_name, equipments.equ_status, equipments.equ_availability, equipment_types.type_name
+	SELECT equipments.equ_name, equipments.equ_status, equipments.equ_availability, equipment_types.type_name
 	FROM equipments
 	INNER JOIN equipment_types ON equipments.equipment_type_id = equipment_types_id; 
 	`
@@ -44,7 +43,7 @@ func (m *EquipmentModel) Display() ([]EquipmentType, error) {
 	// Iterate over the rows and create a slice of structs
 	for rows.Next() {
 		var equipmentType EquipmentType
-		err := rows.Scan(&equipmentType.ID, &equipmentType.EquipmentName, &equipmentType.EquipmentStatus, &equipmentType.EquipmentAvailability, &equipmentType.TypeName)
+		err := rows.Scan(&equipmentType.EquipmentName, &equipmentType.EquipmentStatus, &equipmentType.EquipmentAvailability, &equipmentType.TypeName)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
 			return nil, err
@@ -70,7 +69,7 @@ func (m *EquipmentModel) Delete(id2 string) error {
 	}
     query := `
 	DELETE FROM equipments
-	WHERE equipments_id = $1
+	WHERE equ_name = $1
 	`
 	result, err := m.DB.Exec(query, int_id)
 	if err != nil {
@@ -91,20 +90,16 @@ func (m *EquipmentModel) Delete(id2 string) error {
 	return nil
 }
 
-func (m *EquipmentModel) Update(value, value2, typ, id string) error {
-	var int_id int
-	int_id, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
+func (m *EquipmentModel) Update(value, value2, typ, name string) error {
+	
     query := `
 		UPDATE equipments
 		SET equ_status = $1, equ_availability = $2
-		WHERE id = $3;
+		WHERE equ_name = $3;
 	`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err = m.DB.ExecContext(ctx, query, value, value2, int_id)
+	_, err := m.DB.ExecContext(ctx, query, value, value2, name)
 	if err != nil {
 		fmt.Println("Error updating equipment:", err)
 	    return err
