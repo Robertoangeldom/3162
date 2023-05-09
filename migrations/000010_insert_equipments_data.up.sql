@@ -1,10 +1,10 @@
 INSERT INTO equipments (equ_name, equipment_type_id, equ_status, equ_availability)
 VALUES 
 ('Cable Crossover', 3, true, true),
-('Barbell Rack', 4, true, true),
+('Barbell Rack', 4, false, false),
 ('Glute-Ham Developer', 2, true, true),
 ('Incline Bench Press', 1, true, true),
-('Leg Curl Machine', 2, true, true),
+('Leg Curl Machine', 2, false, false),
 ('Seated Leg Press', 2, true, true),
 ('Lat Pulldown Machine', 3, true, true),
 ('EZ Curl Bar', 4, true, true),

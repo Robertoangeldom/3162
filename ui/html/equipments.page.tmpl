@@ -1,12 +1,11 @@
-{{template "base" .}}
 {{define "content"}}
-<table>
+<table class="table table-dark table-striped table-hover">
     <thead>
         <tr>
-            <th>Equipment Name</th>
-            <th>Equipment Status</th>
-            <th>Equipment Availability</th>
-            <th>Type Name</th>
+            <th scope="col">Equipment Name</th>
+            <th scope="col">Equipment Status</th>
+            <th scope="col">Equipment Availability</th>
+            <th scope="col">Type Name</th>
         </tr>
     </thead>
     <tbody>
@@ -14,8 +13,16 @@
         {{ range . }}
             <tr>
                 <td>{{ .EquipmentName }}</td>
-                <td>{{ .EquipmentStatus }}</td>
-                <td>{{ .EquipmentAvailability }}</td>
+                {{if eq .EquipmentStatus "true"}}
+                <td><button class="btn btn-success btn-sm equipment-status" data-equipment-id="{{ .EquipmentID }}">Good</button></td>
+                {{else}}
+                <td><button class="btn btn-secondary btn-sm equipment-status" data-equipment-id="{{ .EquipmentID }}">Bad</button></td>
+                {{end}}
+                {{if eq .EquipmentAvailability "true"}}
+                <td><button class="btn btn-success btn-sm equipment-availability" data-equipment-id="{{ .EquipmentID }}">Available</button></td>
+                {{else}}
+                <td><button class="btn btn-secondary btn-sm equipment-availability" data-equipment-id="{{ .EquipmentID }}">Not Available</button></td>
+                {{end}}
                 <td>{{ .TypeName }}</td>
             </tr>
         {{ end }}

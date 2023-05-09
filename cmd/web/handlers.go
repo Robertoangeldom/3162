@@ -58,13 +58,6 @@ func (app *application) loginformSubmit(w http.ResponseWriter, r *http.Request) 
 	} else if roles_id == 1 {
 		app.sessionManager.Put(r.Context(), "authenticatedUserID", id)
 		http.Redirect(w, r, "/admin", http.StatusSeeOther)
-		if roles_id == 2 {
-			app.sessionManager.Put(r.Context(), "authenticatedUserID", id)
-			http.Redirect(w, r, "/user", http.StatusSeeOther)
-		} else if roles_id == 1 {
-			app.sessionManager.Put(r.Context(), "authenticatedUserID", id)
-			http.Redirect(w, r, "/admin", http.StatusSeeOther)
-		}
 	}
 }
 
@@ -92,24 +85,13 @@ func (app *application) registerSubmit(w http.ResponseWriter, r *http.Request) {
 	err := app.user.Insert(email, fname, lname, age, address, phone, password)
 	if err != nil {
 		if errors.Is(err, models.ErrDuplicateEmail) {
-			RenderTemplate(w, "signup.page.tmpl", nil)
+			RenderTemplate(w, "register.page.tmpl", nil)
 		}
 	}
 	app.sessionManager.Put(r.Context(), "flash", "SignupWassuccessful")
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
-	app.sessionManager.Put(r.Context(), "flash", "SignupWassuccessful")
-	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
-// func (app *application) reserve(w http.ResponseWriter, r *http.Request) {
-// 	RenderTemplate(w, "reservation.page.tmpl", nil)
-// }
-
-// // reserveFormSubmit
-//
-//	func (app *application) reserveFormSubmit(w http.ResponseWriter, r *http.Request) {
-//		RenderTemplate(w, "reservation.page.tmpl", nil)
-//	}
 func (app *application) userPortal(w http.ResponseWriter, r *http.Request) {
 	flash := app.sessionManager.PopString(r.Context(), "flash")
 	//render
@@ -121,31 +103,6 @@ func (app *application) userPortal(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
-	ts, err := template.ParseFiles("./ui/html/equipments.page.tmpl", "./ui/html/base.layout.tmpl")
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-	log.Println(ts)
-	equipmentTypes, err := app.equipments.Display()
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-
-	log.Println(equipmentTypes)
-	err = ts.Execute(w, equipmentTypes)
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-}
-
-// userPortalFormSubmit
 // userPortalFormSubmit
 func (app *application) userPortalFormSubmit(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
@@ -162,6 +119,92 @@ func (app *application) userPortalFormSubmit(w http.ResponseWriter, r *http.Requ
 		}
 	}
 }
+func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
+	
+	ts, err := template.ParseFiles("./ui/html/equipments.page.tmpl", "./ui/html/base.layout.tmpl")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	equipmentTypes, err := app.equipments.Display()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	err = ts.Execute(w, equipmentTypes)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) {
+	flash := app.sessionManager.PopString(r.Context(), "flash")
+	//render
+	
+
+	ts, err := template.ParseFiles("./ui/html/equ_admin.page.tmpl", "./ui/html/base.layout.tmpl")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	equipmentTypes, err := app.equipments.Display()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	data := &templateData{ //putting flash into template data
+		EquipmentTypes: equipmentTypes,
+		Flash:     flash,
+		CSRFToken: nosurf.Token(r),
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (app *application) equipmentDeleteSubmit(w http.ResponseWriter, r *http.Request) {
+    
+	r.ParseForm()
+	value := r.PostForm.Get("value") //"name" is the name of the form
+	value2 := r.PostForm.Get("value2")
+	id := r.PostForm.Get("id")
+	typ := r.PostForm.Get("type")
+	button := r.PostForm.Get("myButton")
+    // Delete an equipment type
+	log.Println(value, value2, id, typ)
+
+	if button == "delete"{
+		err := app.equipments.Delete(id)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}else{
+		err := app.equipments.Update(value, value2, typ, id)
+		if err != nil {
+			log.Println(err.Error())
+    	    http.Error(w, err.Error(), http.StatusBadRequest)
+     	    return
+		}
+	}
+}
+
+
 func (app *application) adminPortal(w http.ResponseWriter, r *http.Request) {
 	RenderTemplate(w, "adminPortal.page.tmpl", nil)
 }
@@ -182,44 +225,6 @@ func (app *application) feedbackFormSubmit(w http.ResponseWriter, r *http.Reques
 //Display all users on Admin dashboard
 
 func (app *application) displayUsers(w http.ResponseWriter, r *http.Request) {
-	// readQuote := `Select users_id, first_name, last_name, phone_number, user_password, activated
-	// From users limit 3;`
-	// rows, err := app.user.DB.Query(readQuote)
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	http.Error(w,
-	// 		http.StatusText(http.StatusInternalServerError),
-	// 		http.StatusInternalServerError)
-	// }
-	// defer rows.Close()
-	// var users []models.User
-	// for rows.Next() {
-	// 	var u models.User
-	// 	err = rows.Scan(&u.ID, &u.FirstName, &u.LastName,
-	// 		&u.Phone, &u.Password, &u.Activated)
-
-	// 	if err != nil {
-	// 		log.Println(err.Error())
-	// 		http.Error(w,
-	// 			http.StatusText(http.StatusInternalServerError),
-	// 			http.StatusInternalServerError)
-	// 	}
-	// 	users = append(users, u)
-
-	// }
-	// err = rows.Err()
-	// if err != nil {
-	// 	log.Println(err.Error())
-	// 	http.Error(w,
-	// 		http.StatusText(http.StatusInternalServerError),
-	// 		http.StatusInternalServerError)
-	// }
-	// for _, user := range users {
-	// 	fmt.Fprintf(w, "%v\n", user)
-	// }
-
-	// starting here
-
 	ts, err := template.ParseFiles("./ui/html/view.users.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())

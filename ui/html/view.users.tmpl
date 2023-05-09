@@ -20,7 +20,6 @@
         {{ if . }}
         {{ range . }}
             <tr>
-                
                     <td>{{.ID}}</td>
                     <td>{{.Email}}</td>
                     <td>{{.FirstName}}</td>
@@ -28,10 +27,6 @@
                     <td>{{.Age}} </td>
                     <td>{{.Address}} </td>
                     <td>{{.Phone}} </td>
-                    <td>{{.Roles}} </td>
-                    <td>{{.Password}} </td>
-                    <td>{{.Activated}} </td>
-                    <td>{{.CreatedAt}} </td>
             </tr>
         {{ end }}
         {{ else }}

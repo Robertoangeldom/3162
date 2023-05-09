@@ -104,7 +104,7 @@ func (m *UserModel) Authenticate(email, password string) (int, int, error) {
 // The Display() function retrieves all equipment types from the database
 func (m *UserModel) Display() ([]User, error) {
 	query := `
-	Select users_id, first_name, last_name, phone_number, user_password, activated
+	Select users_id, first_name, last_name, phone_number, activated
     From users limit 3;
 	`
 	rows, err := m.DB.Query(query)

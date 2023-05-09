@@ -1,0 +1,52 @@
+{{template "base" .}}
+
+{{define "content"}}
+<h2 class="text-light text-center">Gym Registration Form</h2>
+<div class="text-light">
+
+    <form action="" method="post" novalidate>
+      <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+    <div class="col">
+       <div class="mb-3">
+        <label class="form-label">Equipment Name</label>
+            <div class="input-group"> 
+              <input type="text" class="form-control" name="firstname" value="{{.EquipmentName}}" required>
+            </div>
+      </div>
+       <div class="mb-3"> 
+        <label class="form-label">Equipment Status</label>
+            <div class="input-group"> 
+              <input type="text" class="form-control" name="" value="{{.EquipmentStatus}}" required>
+            </div>
+      </div>
+       <div class="mb-3"> 
+        <label class="form-label">Equipment Availability</label>
+        <div class="input-group"> 
+          <input type="text" class="form-control" name="available" value="{{.EquipmentAvailability}}" required>
+        </div>
+      </div>
+       <div class="mb-3">
+        <label class="form-label">Equipment Type</label>
+        <div class="input-group"> 
+          <input type="text" class="form-control" name="type" value="{{.TypeName}}" required>
+        </div>
+      </div>
+    </div>
+       <div class="mb-3"> 
+        <label class="form-label">Phone</label>
+        <div class="input-group"> 
+          <input type="text" class="form-control" name="phone" placeholder="602-6907" required>
+        </div>
+      </div>
+      <div class="mb-3"> 
+        <label class="form-label">Email Address</label>
+        <div class="input-group"> 
+          <span class="input-group-text"><i class="fa-solid fa-envelope"></i></span>
+          <input type="email" class="form-control" name="email"  required>
+        </div>
+      </div>
+  </div>
+  <button type="submit" class="btn btn-success" value="Register">Update</button>
+</form>
+</div>
+{{ end }}
