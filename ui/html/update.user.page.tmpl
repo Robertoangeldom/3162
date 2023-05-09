@@ -1,0 +1,24 @@
+<!-- File: ui/html/update.user.page.tmpl -->
+{{template "base" .}}
+{{define "content"}}
+<h3>Update User</h3>
+<hr>
+<form method="POST" action="/update?id={{.ID}}">
+    <label for="first_name">First Name:</label>
+    <input type="text" name="first_name" value="{{.FirstName}}"><br>
+
+    <label for="last_name">Last Name:</label>
+    <input type="text" name="last_name" value="{{.LastName}}"><br>
+
+    <label for="phone">Phone:</label>
+    <input type="text" name="phone" value="{{.Phone}}"><br>
+
+    <label for="password">Password:</label>
+    <input type="text" name="password" value="{{.Password}}"><br>
+
+    <label for="activated">Activated:</label>
+    <input type="checkbox" name="activated" {{if .Activated}}checked{{end}}><br>
+
+    <input type="submit" value="Update">
+</form>
+{{ end }}

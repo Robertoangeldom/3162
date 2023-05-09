@@ -26,6 +26,11 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/feedback", dynamicMiddleware.ThenFunc(app.feedback))
 	router.Handler(http.MethodPost, "/feedback", dynamicMiddleware.ThenFunc(app.feedbackFormSubmit))
 	router.Handler(http.MethodGet, "/viewusers", dynamicMiddleware.ThenFunc(app.displayUsers))
+	router.Handler(http.MethodGet, "/users/update", dynamicMiddleware.ThenFunc(app.updateRecord))
+	router.Handler(http.MethodPost, "/users/update", dynamicMiddleware.ThenFunc(app.updateRecord))
+
+	router.Handler(http.MethodGet, "/update", dynamicMiddleware.ThenFunc(app.updateRecord))
+
 	//protected routes
 	protected := dynamicMiddleware.Append(app.requireAuthenticationMiddleware)
 	router.Handler(http.MethodGet, "/equipment", dynamicMiddleware.ThenFunc(app.equipment))

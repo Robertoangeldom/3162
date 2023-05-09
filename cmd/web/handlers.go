@@ -3,9 +3,11 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/MejiaFrancis/3161/3162/quiz-2/recsystem/internal/models"
 	"github.com/justinas/nosurf"
@@ -301,6 +303,8 @@ func (app *application) feedbackFormSubmit(w http.ResponseWriter, r *http.Reques
 //Display all users on Admin dashboard
 
 func (app *application) displayUsers(w http.ResponseWriter, r *http.Request) {
+
+
 	ts, err := template.ParseFiles("./ui/html/view.users.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())
@@ -323,3 +327,194 @@ func (app *application) displayUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// func (app *application) updateRecord(w http.ResponseWriter, r *http.Request) {
+// 	// Get the ID of the record to update from the request URL parameter
+
+// 	ts, err := template.ParseFiles("update.user.page.tmpl", "./ui/html/base.layout.tmpl")
+// 	//RenderTemplate(w, "", nil)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	// start here
+// 	r.ParseForm()
+// 	fname := r.PostForm.Get("firstname") //"name" is the name of the form
+// 	lname := r.PostForm.Get("lastname")
+// 	age := r.PostForm.Get("age")
+// 	phone := r.PostForm.Get("phone")
+// 	address := r.PostForm.Get("address")
+// 	email := r.PostForm.Get("email")
+// 	password := r.PostForm.Get("password")
+// 	//lets write the data to the table
+// 	userTypes, err  := app.user.Update(email, fname, lname, age, address, phone,roles, password, actvated)
+// 	if err != nil {
+// 		if errors.Is(err, models.ErrDuplicateEmail) {
+// 			RenderTemplate(w, "signup.page.tmpl", nil)
+// 		}
+// 	}
+// 	app.sessionManager.Put(r.Context(), "flash", "SignupWassuccessful")
+// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+// 	app.sessionManager.Put(r.Context(), "flash", "SignupWassuccessful")
+// 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+
+// 	//end here
+// 	log.Println(ts)
+
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	log.Println(userTypes)
+// 	err = ts.Execute(w, userTypes)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// }
+func (app *application) updateRecord(w http.ResponseWriter, r *http.Request) {
+	// Get the ID of the record to update from the request URL parameter
+
+	id := r.FormValue("id")
+	id64, err := strconv.ParseInt(id, 10, 64)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	RenderTemplate(w, "update.user.page.tmpl", nil)
+
+	ts, err := template.ParseFiles("update.user.page.tmpl", "./ui/html/base.layout.tmpl")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	// Update the record in the database
+	if r.Method == "POST" {
+		r.ParseForm()
+		fname := r.PostForm.Get("firstname")
+		lname := r.PostForm.Get("lastname")
+		age, err := strconv.Atoi(r.PostForm.Get("age"))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		phone := r.PostForm.Get("phone")
+		address := r.PostForm.Get("address")
+		email := r.PostForm.Get("email")
+		password := []byte(r.PostForm.Get("password"))
+		activated, err := strconv.ParseBool(r.PostForm.Get("activated"))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+		roles, err := strconv.Atoi(r.PostForm.Get("roles"))
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		err = app.user.Update(id64, email, fname, lname, age, address, phone, roles, password, activated)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		// Redirect to the user's profile page
+		http.Redirect(w, r, fmt.Sprintf("/profile/%s", id), http.StatusSeeOther)
+		return
+	}
+
+	// Get the user record from the database
+	user, err := app.user.GetByID(id64)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	// Render the template
+	err = ts.Execute(w, user)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+}
+
+//recent code - now
+
+// func (app *application) updateRecord(w http.ResponseWriter, r *http.Request) {
+// 	// //Get the ID of the record to update from the request URL parameter
+// 	id := r.FormValue("id")
+// 	fmt.Println(id)
+// 	id64, err := strconv.ParseInt(id, 10, 64)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 		return
+// 	}
+// 	// //Get the user record from the database
+// 	user, err := app.user.GetByID(id64)
+// 	if err != nil {
+// 		log.Println(err.Error())
+// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	// // Update the record in the database
+// 	// if r.Method == "POST" {
+// 	// 	r.ParseForm()
+// 	// 	fname := r.PostForm.Get("firstname")
+// 	// 	lname := r.PostForm.Get("lastname")
+// 	// 	age, err := strconv.Atoi(r.PostForm.Get("age"))
+// 	// 	if err != nil {
+// 	// 		log.Println(err.Error())
+// 	// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 	// 		return
+// 	// 	}
+// 	// 	phone := r.PostForm.Get("phone")
+// 	// 	address := r.PostForm.Get("address")
+// 	// 	email := r.PostForm.Get("email")
+// 	// 	password := []byte(r.PostForm.Get("password"))
+// 	// 	activated, err := strconv.ParseBool(r.PostForm.Get("activated"))
+// 	// 	if err != nil {
+// 	// 		log.Println(err.Error())
+// 	// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 	// 		return
+// 	// 	}
+// 	// 	roles, err := strconv.Atoi(r.PostForm.Get("roles"))
+// 	// 	if err != nil {
+// 	// 		log.Println(err.Error())
+// 	// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 	// 		return
+// 	// 	}
+
+// 	// 	err = app.user.Update(id64, email, fname, lname, age, address, phone, roles, password, activated)
+// 	// 	if err != nil {
+// 	// 		log.Println(err.Error())
+// 	// 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// 	// 		return
+// 	// 	}
+
+// 	// 	// Redirect to the user's profile page
+// 	// 	http.Redirect(w, r, fmt.Sprintf("/profile/%s", id), http.StatusSeeOther)
+// 	// 	return
+// 	// }
+// 	data := &templateData{ //putting flash into template data
+// 		User: user,
+// 	}
+
+// 	RenderTemplate(w, "update.user.page.tmpl", data)
+// }
