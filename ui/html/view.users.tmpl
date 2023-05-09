@@ -30,7 +30,15 @@
                     <td>{{.Password}} </td>
                     <td>{{.Activated}} </td>
                     <td>{{.CreatedAt.Format "02 Jan 2006 15:04:05"}}</td>
-                    <td><a href="/update?id={{.ID}}"><button type="submit" class="btn btn-success" value="Update">Update</button></a></td>
+                    <td> 
+                        <form action="./update.user.page.tmpl" method="POST">
+                            <input type="hidden" name="id" value="{{.ID}}">
+                            <button type="submit" class="btn btn-success">Update</button>
+                        </form>
+                        
+                    
+                    
+                    </td>
 
                     
             </tr>
