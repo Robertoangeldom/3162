@@ -120,7 +120,7 @@ func (app *application) userPortalFormSubmit(w http.ResponseWriter, r *http.Requ
 	}
 }
 func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
-	
+
 	ts, err := template.ParseFiles("./ui/html/equipments.page.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())
@@ -134,8 +134,13 @@ func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+	data := struct {
+		EquipmentTypes []models.EquipmentType
+	}{
+		EquipmentTypes: equipmentTypes,
+	}
 
-	err = ts.Execute(w, equipmentTypes)
+	err = ts.Execute(w, data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -143,7 +148,68 @@ func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) {
+/*unc (app *application) equipmentUpdate(w http.ResponseWriter, r *http.Request){
+		ts, err := template.ParseFiles("./ui/html/equ_admin.page.tmpl", "./ui/html/base.layout.tmpl")
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		equipmentTypes, err := app.equipments.Display()
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+
+		data := struct {
+			EquipmentTypes []models.EquipmentType
+		}{
+			EquipmentTypes: equipmentTypes,
+		}
+
+		err = ts.Execute(w, data)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+}
+
+func (app *application) equipmentUpdateSubmit(w http.ResponseWriter, r *http.Request) {
+	log.Println("hello there")
+	r.ParseForm()
+	status := r.PostForm.Get("status") //"name" is the name of the form
+	available:= r.PostForm.Get("available")
+	id := r.PostForm.Get("id")
+	button:= r.PostForm.Get("myButton")
+	//lets write the data to the table
+	if button == "delete" {
+		err := app.equipments.Delete(id)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	} else {
+		err := app.equipments.Update(status, available, id)
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+}
+
+
+func (app *application) test(w http.ResponseWriter, r *http.Request) {
+	log.Println("hello there")
+}*/
+
+
+
+func (app *application) adminPortal(w http.ResponseWriter, r *http.Request) {
 	ts, err := template.ParseFiles("./ui/html/equ_admin.page.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())
@@ -158,48 +224,68 @@ func (app *application) equipmentDelete(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = ts.Execute(w, equipmentTypes)
+	data := struct {
+		EquipmentTypes []models.EquipmentType
+	}{
+		EquipmentTypes: equipmentTypes,
+	}
+
+	err = ts.Execute(w, data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-}
-
-func (app *application) equipmentDeleteSubmit(w http.ResponseWriter, r *http.Request) {
-    
-	r.ParseForm()
-	value := r.PostForm.Get("status") //"name" is the name of the form
-	value2 := r.PostForm.Get("available")
-	name := r.PostForm.Get("name")
-	typ := r.PostForm.Get("type")
-	button := r.PostForm.Get("myButton")
-    // Delete an equipment type
-	log.Println(value, value2, typ)
-
-	if button == "delete"{
-		err := app.equipments.Delete(name)
-		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}else{
-		err := app.equipments.Update(value, value2, typ, name)
-		if err != nil {
-			log.Println(err.Error())
-    	    http.Error(w, err.Error(), http.StatusBadRequest)
-     	    return
-		}
-	}
-}
-
-
-func (app *application) adminPortal(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "adminPortal.page.tmpl", nil)
+	log.Println("hello there")
 }
 func (app *application) adminPortalFormSubmit(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "adminPortal.page.tmpl", nil)
+	// Only allow POST requests to this handler
+    if r.Method != http.MethodPost {
+        http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        return
+    }
+
+    // Parse the form values
+    err := r.ParseForm()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
+
+    // Get the ID of the equipment
+    id := r.FormValue("id")
+
+    // Get the button that was clicked
+    button := r.FormValue("myButton")
+
+    // Get the status and availability values based on the button clicked
+    var status string
+    var availability string
+    switch button {
+    case "update":
+        status = r.FormValue("status")
+        availability = r.FormValue("available")
+    case "delete":
+        // Call function to delete equipment from database
+        // ...
+		err := app.equipments.Delete(id)
+		if err != nil {
+			log.Println("an error occured when passing the data", err.Error())
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+        http.Redirect(w, r, "/admin", http.StatusSeeOther)
+        return
+    default:
+        http.Error(w, "Invalid button value", http.StatusBadRequest)
+        return
+    }
+	err = app.equipments.Update(status, availability, id)
+	if err != nil {
+		log.Println("an error occured when passing the data", err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
 }
 func (app *application) feedback(w http.ResponseWriter, r *http.Request) {
 	RenderTemplate(w, "feedback.page.tmpl", nil)

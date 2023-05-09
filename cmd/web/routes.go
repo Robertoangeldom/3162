@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
 
 	dynamicMiddleware := alice.New(app.sessionManager.LoadAndSave, noSurf)
-	
+
 	// from here
 	router.Handler(http.MethodGet, "/", dynamicMiddleware.ThenFunc(app.home))
 	router.Handler(http.MethodGet, "/about", dynamicMiddleware.ThenFunc(app.about))
@@ -29,12 +29,12 @@ func (app *application) routes() http.Handler {
 	//protected routes
 	protected := dynamicMiddleware.Append(app.requireAuthenticationMiddleware)
 	router.Handler(http.MethodGet, "/equipment", dynamicMiddleware.ThenFunc(app.equipment))
-	router.Handler(http.MethodGet, "/admin/equipment", dynamicMiddleware.ThenFunc(app.equipmentDelete))
-	router.Handler(http.MethodPost, "/admin/equipment", dynamicMiddleware.ThenFunc(app.equipmentDeleteSubmit,))
+	//router.Handler(http.MethodGet, "/edit_equipment", dynamicMiddleware.ThenFunc(app.equipmentUpdate))
+	//router.Handler(http.MethodPost, "/edit_equipment", dynamicMiddleware.ThenFunc(app.equipmentUpdateSubmit))
 	router.Handler(http.MethodGet, "/user", protected.ThenFunc(app.userPortal))
 	router.Handler(http.MethodPost, "/user", protected.ThenFunc(app.userPortalFormSubmit))
-	router.Handler(http.MethodGet, "/admin", protected.ThenFunc(app.adminPortal))
-	router.Handler(http.MethodPost, "/admin", protected.ThenFunc(app.adminPortalFormSubmit))
+	router.Handler(http.MethodGet, "/admin", dynamicMiddleware.ThenFunc(app.adminPortal))
+	router.Handler(http.MethodPost, "/admin", dynamicMiddleware.ThenFunc(app.adminPortalFormSubmit))
 	//stop here
 
 	//tidy up the middleware chain

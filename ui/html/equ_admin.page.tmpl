@@ -12,14 +12,14 @@
         </tr>
     </thead>
     <tbody>
-        {{ if . }}
-        {{ range . }}
+        {{ if .EquipmentTypes }}
+{{ range .EquipmentTypes }}
             <tr>
                 <td>{{ .ID }}</td>
                 <td>{{ .EquipmentName }}</td>
                 {{if eq .EquipmentStatus "true"}}
                 <td>
-                    <form method="post" novalidate>
+                    <form action="/admin" method="post" novalidate>
                         <input type="hidden" value="{{.ID}}" name="id">
                         <input type="hidden" value="{{.EquipmentStatus}}" name="status">
                         <button type="submit" name="myButton" class="btn btn-success btn-sm" value="update">Good</button>
@@ -27,7 +27,7 @@
                 </td>              
                 {{else}}
                 <td>
-                    <form method="post" novalidate>
+                    <form action="/admin" method="post" novalidate>
                         <input type="hidden" value="{{.ID}}" name="id">
                         <input type="hidden" value="{{.EquipmentStatus}}" name="status">
                         <button type="submit" name="myButton" class="btn btn-secondary btn-sm" value="update">Bad</button>
@@ -36,7 +36,7 @@
                 {{end}}
                 {{if eq .EquipmentAvailability "true"}}
                 <td>
-                    <form method="post" novalidate>
+                    <form action="/admin" method="post" novalidate>
                         <input type="hidden" value="{{.ID}}" name="id">
                         <input type="hidden" value="{{.EquipmentAvailability}}" name="available">
                         <button type="submit" name="myButton" class="btn btn-success btn-sm" value="update">Available</button>
@@ -44,7 +44,7 @@
                 </td> 
                 {{else}}
                 <td>
-                    <form method="post" novalidate>
+                    <form action="/admin" method="post" novalidate>
                         <input type="hidden" value="{{.ID}}" name="id">
                         <input type="hidden" value="{{.EquipmentAvailability}}" name="available">
                         <button type="submit" name="myButton" class="btn btn-secondary btn-sm" value="update">Not Available</button>
@@ -53,7 +53,7 @@
                 {{end}}
                 <td>{{ .TypeName }}</td>
                 <td>
-                    <form method="post" novalidate>
+                    <form action="/admin" method="post" novalidate>
                         <input type="hidden" value="{{.ID}}" name="id">
                         <button type="submit" name="myButton" class="btn btn-sm btn-danger" value="delete"> Delete</button>
                     </form>

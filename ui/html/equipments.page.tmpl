@@ -1,3 +1,4 @@
+{{template "base" .}}
 {{define "content"}}
 <table class="table table-dark table-striped table-hover">
     <thead>
@@ -10,26 +11,28 @@
         </tr>
     </thead>
     <tbody>
-        {{ if . }}
-        {{ range . }}
-            <tr>
-                <td>{{ .EquipmentName }}</td>
-                {{if eq .EquipmentStatus "true"}}
-                <td><button class="btn btn-success btn-sm equipment-status" data-equipment-id="{{ .EquipmentID }}">Good</button></td>
-                {{else}}
-                <td><button class="btn btn-secondary btn-sm equipment-status" data-equipment-id="{{ .EquipmentID }}">Bad</button></td>
-                {{end}}
-                {{if eq .EquipmentAvailability "true"}}
-                <td><button class="btn btn-success btn-sm equipment-availability" data-equipment-id="{{ .EquipmentID }}">Available</button></td>
-                {{else}}
-                <td><button class="btn btn-secondary btn-sm equipment-availability" data-equipment-id="{{ .EquipmentID }}">Not Available</button></td>
-                {{end}}
-                <td>{{ .TypeName }}</td>
-            </tr>
-        {{ end }}
-        {{ else }}
-    <p>No data available.</p>
-    {{ end }}
+        {{ if .EquipmentTypes }}
+{{ range .EquipmentTypes }}
+<tr>
+    <td>{{.ID}}</td>
+    <td>{{.EquipmentName}}</td>
+    {{if eq .EquipmentStatus "true"}}
+    <td><button class="btn btn-success btn-sm equipment-status" data-equipment-id="{{ .ID }}">Good</button></td>
+    {{else}}
+    <td><button class="btn btn-secondary btn-sm equipment-status" data-equipment-id="{{ .ID }}">Bad</button></td>
+    {{end}}
+    {{if eq .EquipmentAvailability "true"}}
+    <td><button class="btn btn-success btn-sm equipment-availability" data-equipment-id="{{ .ID }}">Available</button></td>
+    {{else}}
+    <td><button class="btn btn-secondary btn-sm equipment-availability" data-equipment-id="{{ .ID }}">Not Available</button></td>
+    {{end}}
+    <td>{{.TypeName}}</td>
+</tr>
+{{ end }}
+{{ else }}
+<p>No data available.</p>
+{{ end }}
+
     </tbody>
 </table>
 {{ end }}

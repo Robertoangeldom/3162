@@ -11,10 +11,11 @@ import (
 
 // The EquipmentType model will represent a single equipment type in our equipment_types table
 type EquipmentType struct {
-	 EquipmentName           string
-	 EquipmentStatus         string
-	 EquipmentAvailability   string
-	 TypeName                string
+	ID                    string
+	EquipmentName         string
+	EquipmentStatus       string
+	EquipmentAvailability string
+	TypeName              string
 }
 
 // The EquipmentModel type will encapsulate the
@@ -26,15 +27,15 @@ type EquipmentModel struct {
 
 // The Display() function retrieves all equipment types from the database
 func (m *EquipmentModel) Display() ([]EquipmentType, error) {
-    query := `
-	SELECT equipments.equ_name, equipments.equ_status, equipments.equ_availability, equipment_types.type_name
+	query := `
+	SELECT equipments.equipments_id, equipments.equ_name, equipments.equ_status, equipments.equ_availability, equipment_types.type_name
 	FROM equipments
 	INNER JOIN equipment_types ON equipments.equipment_type_id = equipment_types_id; 
 	`
 	rows, err := m.DB.Query(query)
 	if err != nil {
 		fmt.Println("Error querying database:", err)
-	    return nil, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -43,7 +44,7 @@ func (m *EquipmentModel) Display() ([]EquipmentType, error) {
 	// Iterate over the rows and create a slice of structs
 	for rows.Next() {
 		var equipmentType EquipmentType
-		err := rows.Scan(&equipmentType.EquipmentName, &equipmentType.EquipmentStatus, &equipmentType.EquipmentAvailability, &equipmentType.TypeName)
+		err := rows.Scan(&equipmentType.ID, &equipmentType.EquipmentName, &equipmentType.EquipmentStatus, &equipmentType.EquipmentAvailability, &equipmentType.TypeName)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
 			return nil, err
@@ -67,7 +68,7 @@ func (m *EquipmentModel) Delete(id2 string) error {
 		fmt.Println("Error in converting string to int:", err)
 		return err
 	}
-    query := `
+	query := `
 	DELETE FROM equipments
 	WHERE equ_name = $1
 	`
@@ -90,19 +91,19 @@ func (m *EquipmentModel) Delete(id2 string) error {
 	return nil
 }
 
-func (m *EquipmentModel) Update(value, value2, typ, name string) error {
-	
-    query := `
+func (m *EquipmentModel) Update(value, value2, id string) error {
+
+	query := `
 		UPDATE equipments
 		SET equ_status = $1, equ_availability = $2
 		WHERE equ_name = $3;
 	`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
-	_, err := m.DB.ExecContext(ctx, query, value, value2, name)
+	_, err := m.DB.ExecContext(ctx, query, value, value2, id)
 	if err != nil {
 		fmt.Println("Error updating equipment:", err)
-	    return err
+		return err
 	}
 
 	return nil
