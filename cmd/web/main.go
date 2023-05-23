@@ -24,6 +24,7 @@ type application struct {
 	reservations   models.ReservationModel
 	user           models.UserModel
 	equipments     models.EquipmentModel
+	feedback       models.FeedbackModel
 	sessionManager *scs.SessionManager
 }
 
@@ -56,6 +57,7 @@ func main() {
 		reservations:   models.ReservationModel{DB: db},
 		user:           models.UserModel{DB: db},
 		equipments:     models.EquipmentModel{DB: db},
+		feedback: models.FeedbackModel{DB: db},
 		sessionManager: sessionManager,
 	}
 	// cleanup the connection pool

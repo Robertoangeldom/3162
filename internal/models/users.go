@@ -119,7 +119,7 @@ func (m *UserModel) Display() ([]User, error) {
 	// Iterate over the rows and create a slice of structs
 	for rows.Next() {
 		var userType User
-		err := rows.Scan(&userType.ID, &userType.FirstName, &userType.LastName, &userType.Phone, &userType.Password, &userType.Activated)
+		err := rows.Scan(&userType.ID, &userType.FirstName, &userType.LastName, &userType.Phone, &userType.Password)
 		if err != nil {
 			fmt.Println("Error scanning row:", err)
 			return nil, err
@@ -137,9 +137,7 @@ func (m *UserModel) Display() ([]User, error) {
 
 // Updates the individual user in the row
 
-
-
-func (m *UserModel) Update(id int64,email string, fname string, lname string, age int, address string, phone string, roles  int, password []byte, activated bool) error {
+func (m *UserModel) Update(id int64, email string, fname string, lname string, age int, address string, phone string, roles int, password []byte, activated bool) error {
 	//var int_age int
 	//lets first hash the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 12)
@@ -150,7 +148,7 @@ func (m *UserModel) Update(id int64,email string, fname string, lname string, ag
 	// if err != nil {
 	// 	return err
 	// }
-	
+
 	query := `UPDATE users SET email=$1, first_name=$2, last_name=$3, age=$4, address=$5, phone=$6, roles=$7, password=$8, activated=$9 WHERE id=$10`
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -166,15 +164,14 @@ func (m *UserModel) Update(id int64,email string, fname string, lname string, ag
 	return nil
 }
 func (u *UserModel) GetByID(id int64) (*User, error) {
-    query := "SELECT id, email, firstname, lastname, age, address, phone, roles, password, activated FROM users WHERE id = $1"
+	query := "SELECT id, email, firstname, lastname, age, address, phone, roles, password, activated FROM users WHERE id = $1"
 
-    user := &User{}
-    err := u.DB.QueryRow(query, id).Scan(&user.ID, &user.Email, &user.FirstName, &user.LastName, &user.Age, &user.Address, &user.Phone, &user.Roles, &user.Password, &user.Activated)
-    if err != nil {
+	user := &User{}
+	err := u.DB.QueryRow(query, id).Scan(&user.ID, &user.Email, &user.FirstName, &user.LastName, &user.Age, &user.Address, &user.Phone, &user.Roles, &user.Password, &user.Activated)
+	if err != nil {
 		fmt.Println("Error scanning row:", err)
 		return nil, err
 	}
-    
 
-    return user, nil
+	return user, nil
 }

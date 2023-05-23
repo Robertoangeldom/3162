@@ -123,7 +123,7 @@ func (app *application) userPortalFormSubmit(w http.ResponseWriter, r *http.Requ
 }
 func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
 
-	ts, err := template.ParseFiles("./ui/html/equipments.page.tmpl", "./ui/html/base.layout.tmpl")
+	ts, err := template.ParseFiles("./ui/html/feedback.page.tmpl", "./ui/html/base.layout.tmpl")
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -164,6 +164,7 @@ func (app *application) equipment(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
+      <td>{{.EquipmentName}}</td>
 
 		data := struct {
 			EquipmentTypes []models.EquipmentType
@@ -289,8 +290,34 @@ func (app *application) adminPortalFormSubmit(w http.ResponseWriter, r *http.Req
 		return
 	}
 }
-func (app *application) feedback(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "feedback.page.tmpl", nil)
+func (app *application) feedbackDisplay(w http.ResponseWriter, r *http.Request) {
+	ts, err := template.ParseFiles("./ui/html/feedback.page.tmpl", "./ui/html/base.layout.tmpl")
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	feedback, err := app.feedback.Display()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	data := struct {
+		Feedback []models.Feedback
+	}{
+		Feedback: feedback,
+	}
+
+	err = ts.Execute(w, data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	log.Println("hello there")
 }
 
 // feedbackFormSubmit

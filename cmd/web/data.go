@@ -8,6 +8,7 @@ type templateData struct {
 	Reservation *models.Reservation
 	User 		*models.User
 	Equipment  	*models.EquipmentType
+	Feedback  	*models.Feedback
 	Flash 	 	string
 	CSRFToken 	string
 }

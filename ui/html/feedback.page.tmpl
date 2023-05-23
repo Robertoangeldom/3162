@@ -2,17 +2,39 @@
 {{define "content"}}
 <header>
    
-      <div>
-        <!-- content for each tab goes here -->
-       
-        <section id="feedback">
-          <h2>Feeedback</h2>
-          <p>Stuff about the system. Creator information</p>
-          <!-- information about the website or company goes here -->
-        </section>
-        
-    </div>
+  <div>
+    <!-- content for each tab goes here -->
+   
+    <section id="feedback">
+      <h2>Feeedback</h2>
+      <!-- information about the website or company goes here -->
+      <table class="table table-dark table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Feeedback</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{ if .Feedback }}
+    {{ range .Feedback }}
+    <tr>
+      <td>{{ .FeedbackID }}</td>
+      <td>{{.FirstName}}</td>
+      <td>{{.LastName}}</td>
+      <td>{{.FeedbackMessage}}</td>
+    </tr>
+    {{ end }}
+    {{ else }}
+    <p>No data available.</p>
+    {{ end }}
+    
+        </tbody>
+    </table>
+    </section>
+    
+</div>
 </header>
-{{ end }}
-
-
+{{end}}

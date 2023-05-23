@@ -23,7 +23,7 @@ func (app *application) routes() http.Handler {
 	router.Handler(http.MethodPost, "/login", dynamicMiddleware.ThenFunc(app.loginformSubmit))
 	router.Handler(http.MethodGet, "/register", dynamicMiddleware.ThenFunc(app.register))
 	router.Handler(http.MethodPost, "/register", dynamicMiddleware.ThenFunc(app.registerSubmit))
-	router.Handler(http.MethodGet, "/feedback", dynamicMiddleware.ThenFunc(app.feedback))
+	router.Handler(http.MethodGet, "/feedback", dynamicMiddleware.ThenFunc(app.feedbackDisplay))
 	router.Handler(http.MethodPost, "/feedback", dynamicMiddleware.ThenFunc(app.feedbackFormSubmit))
 	router.Handler(http.MethodGet, "/viewusers", dynamicMiddleware.ThenFunc(app.displayUsers))
 	router.Handler(http.MethodGet, "/users/update", dynamicMiddleware.ThenFunc(app.updateRecord))
